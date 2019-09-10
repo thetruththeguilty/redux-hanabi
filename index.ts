@@ -49,8 +49,8 @@ export function createHanabi(opts: {stackMaxCount?: number} = {}) {
 
 // types generator is inspired by iron-redux
 
-type F<T> = { [key in keyof T]: { success: string; error: string; loading: string } };
-type B<T> = { [key in keyof T]: string };
+type F<T> = { [key in keyof T]: { success: key; error: 'error'; loading: 'loading' } };
+type B<T> = { [key in keyof T]: key };
 
 const LOADING_SUFFIX = '_loading';
 const SUCCESS_SUFFIX = '_success';
@@ -102,22 +102,19 @@ export function createAction<T>(type: T, stateKey = '') {
     function (params?: P, meta?: any): IAction<T, R> {
       if (stateKey) {
         return {
-          type,
-          stateKey,
-          payload: fn(params)
+          type, stateKey, payload: fn(params), meta
         };
       }
       return {
-        type,
-        payload: fn(params)
+        type, payload: fn(params), meta
       };
     };
 }
 
-interface IFetchTypes {
-  error: string;
-  success: string;
-  loading: string;
+interface IFetchTypes<key> {
+  error: 'error';
+  success: key;
+  loading: 'loading';
 }
 
 // let fetchAction = {
@@ -138,7 +135,7 @@ type MethodType = 'GET' | 'POST' | 'PUT' | 'DELETE'
 /**
  * create fetch action,
  */
-export function createFetchAction<Key>(types: IFetchTypes, url: string, method: MethodType = 'GET') {
+export function createFetchAction<Key>(types: IFetchTypes<Key>, url: string, method: MethodType = 'GET') {
   return <Params, Response>(stateKey?: string) => (params?: Params, meta?: any) => {
     const action = {
       stateKey, types, meta, params, url, method,
