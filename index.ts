@@ -88,7 +88,9 @@ export function createFetchMiddleware(
           if (ret.type === ret.types.success || ret.type === ret.types.error) {
             return store.dispatch(ret)
           }
-          return ret
+          ret.type === ret.types.error
+          ret.payload = "@fetch error, return type must be success or error"
+          return store.dispatch(ret)
         })
     }
     else {
@@ -198,6 +200,7 @@ type ValueOf<T> = T[keyof T];
 
 /**
  * get the action type
+ * stateKey is used to distinct the state which to handle the api fetch
  */
 export type ActionType<Actions> =
   | ValueOf<{ [key in keyof Actions]: Actions[key] extends (...args: any[]) => infer R ? R : never }>
@@ -205,7 +208,6 @@ export type ActionType<Actions> =
   | {
       type: 'error';
       payload?: { message: string; [key: string]: any };
-      params?: any;
-      meta?: any;
+      params?: any; meta?: any; stateKey?: string
     }
-  | { type: 'loading'; payload?: any; params?: any; meta?: any };
+  | { type: 'loading'; payload?: any; params?: any; meta?: any, stateKey?: string };

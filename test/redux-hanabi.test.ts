@@ -88,6 +88,7 @@ function reducer2(
 ): InitialState2 {
   switch (action.type) {
     case Types.fetchData.success:
+      // let a = (action as ReturnType<typeof fetchAction.fetchData>)
       return {...state, fetchData: action.payload}
   }
   return state
@@ -146,9 +147,9 @@ describe("test iron redux", () => {
   })
 
   it("fetch middleware", async () => {
-    let t: any = await store.dispatch(actions.fetchTrigger())
+    let t = await store.dispatch(actions.fetchTrigger())
     expect(t.type).toBe("testHanabi/fetchData_success")
-    t = await store.dispatch(fetchAction.fetchData('to fail'))
-    expect(t.type).toBe("testHanabi/fetchData_error")
+    let d = await store.dispatch(fetchAction.fetchData('to fail'))
+    expect(d.type).toBe("testHanabi/fetchData_error")
   })
 })
