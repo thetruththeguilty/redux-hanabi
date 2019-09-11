@@ -5,16 +5,18 @@ import {
   createFetchAction,
   ActionType,
   ReturnState,
+  createFetchMiddleware,
+  TFetchAction,
 } from '../index';
 
-import { createStore, combineReducers, applyMiddleware } from 'redux'
+import { createStore, combineReducers, applyMiddleware, Action } from 'redux'
 
 /**
  * 定义 types
  */
 
 // 前缀
-const prefix = 'testIron/';
+const prefix = 'testHanabi/';
 
 // 基本action
 enum BasicTypes {
@@ -50,39 +52,66 @@ const fetchAction = {
   fetchData: createFetchAction(Types.fetchData, '/api/data', "GET")<string, {message: true}>("statekey")
 }
 
-class InitialState {
+class InitialState1 {
   num = 0;
   keyword = '';
+}
+
+class InitialState2 {
+  fetchData = 1;
 }
 
 /**
  * reducer
  */
-function reducer(
-  state = new InitialState(),
+function reducer1(
+  state = new InitialState1(),
   action: ActionType<typeof actions>
-): InitialState {
+): InitialState1 {
   console.log(action)
   switch (action.type) {
     case Types.addNum:
       return {...state, num: state.num + action.payload}
+  }
+  return {... state}
+}
+
+function reducer2(
+  state = new InitialState2(),
+  action: ActionType<typeof actions> | ActionType<typeof fetchAction>
+): InitialState2 {
+  switch (action.type) {
     case Types.fetchTrigger:
       action.meta = () => fetchAction.fetchData('asdf')
       return state;
     case Types.loopTrigger:
       action.meta = () => actions.loopTrigger()
       return state;
-    // default: {
-    //   return AsyncTuple.handleAll(prefix, state, action);
-    // }
+    case Types.fetchData.success:
+      return {...state, fetchData: action.payload}
   }
-  return {... state}
+  return state
 }
 
+let rootReducer = combineReducers({
+  reducer1, reducer2
+})
+
 let store = createStore(
-  reducer, 
+  rootReducer, 
   applyMiddleware(
-    createHanabi()
+    createHanabi(),
+    createFetchMiddleware(async (action) => {
+      console.log("fetch", action.method, action.url, action.params)
+
+      if (action.params === "to fail") {
+        action.type = action.types.error
+        return action
+      }
+
+      action.type = action.types.success
+      return action
+    })
   )
 )
 
@@ -97,9 +126,9 @@ describe("test iron redux", () => {
   })
 
   it("test reducer", () => {
-    let state = new InitialState()
+    let state = new InitialState1()
     expect(state.num).toBe(0)
-    state = reducer(state, actions.addNum(2))
+    state = reducer1(state, actions.addNum(2))
     expect(state.num).toBe(2)
   })
 
@@ -110,8 +139,14 @@ describe("test iron redux", () => {
     }))
   })
 
-  it("hanabi test", () => {
-    store.dispatch(actions.fetchTrigger())
+  it("hanabi loop", () => {
     store.dispatch(actions.loopTrigger())
+  })
+
+  it("fetch middleware", async () => {
+    let t: any = await store.dispatch(actions.fetchTrigger())
+    expect(t.type).toBe("testHanabi/fetchData_success")
+    t = await store.dispatch(fetchAction.fetchData('to fail'))
+    expect(t.type).toBe("testHanabi/fetchData_error")
   })
 })

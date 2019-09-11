@@ -5,11 +5,40 @@ interface IAction<T, R> {
   meta?: any,
 }
 
-type THanabiAction = IAction<any, any> & {__stack: number}
+type THanabiAction = IAction<any, any> & { __stack: number }
+
+type TFetchMethod = 'GET' | 'POST' | 'PUT' | 'DELETE'
+
+interface IFetchTypes<key> {
+  error: 'error';
+  success: key;
+  loading: 'loading';
+}
+
+// const action = {
+//   types, params, url, method,
+// };
+export type TFetchAction<Key, Params, Response> = IAction<Key | string, Response> & {
+  types: IFetchTypes<Key>,
+  url: string,
+  method: TFetchMethod,
+  params?: Params,
+  payload?: Response
+}
 
 /**
  * the reducer use action.meta to add a function, to dispatch action,
  * for triggering the state change by state self.
+ * 
+ * some thing like that:
+ * 
+ * - tabReducer
+ *   - pageReducer1
+ *   - pageReducer2
+ *   - pageReducer3
+ * 
+ * so, a certain reducer may generate an action with it's own state.
+ * like fetchNext(page1, currentIndex, fetchNum).
  * 
  * @param {{stackMaxCount: number}} opts 
  */
@@ -46,6 +75,26 @@ export function createHanabi(opts: {stackMaxCount?: number} = {}) {
   };
 }
 
+export function createFetchMiddleware(
+  fn: (action: TFetchAction<any, any, any>) => Promise<TFetchAction<any, any, any>>
+) {
+  return (store: any) => (next: any) => (action: TFetchAction<any, any, any>): any => {
+    let actionRet = next(action)
+    if (action.type === "@fetch") {
+      // dispatch a loading action
+      action.type = action.types.loading
+      store.dispatch(action)
+      return fn(action)
+        .then(ret => {
+          if (ret.type === ret.types.success || ret.type === ret.types.error) {
+            return store.dispatch(ret)
+          }
+          return ret
+        })
+    }
+    return actionRet
+  }
+}
 
 // types generator is inspired by iron-redux
 
@@ -111,12 +160,6 @@ export function createAction<T>(type: T, stateKey = '') {
     };
 }
 
-interface IFetchTypes<key> {
-  error: 'error';
-  success: key;
-  loading: 'loading';
-}
-
 // let fetchAction = {
 //   stateKey: 'state key',
 //   types: {
@@ -130,18 +173,16 @@ interface IFetchTypes<key> {
 //   method: 'GET'
 // }
 
-type MethodType = 'GET' | 'POST' | 'PUT' | 'DELETE'
-
 /**
  * create fetch action,
  */
-export function createFetchAction<Key>(types: IFetchTypes<Key>, url: string, method: MethodType = 'GET') {
-  return <Params, Response>(stateKey?: string) => (params?: Params, meta?: any) => {
+export function createFetchAction<Key>(types: IFetchTypes<Key>, url: string, method: TFetchMethod = 'GET') {
+  return <Params, Response>(stateKey?: string) => (params?: Params, meta?: any): TFetchAction<Key, Params, Response | undefined> => {
     const action = {
       stateKey, types, meta, params, url, method,
       type: "@fetch", payload: undefined,
     };
-    return action as typeof action & { type?: Key; payload?: Response }
+    return action // as typeof action & { type: Key; payload?: Response }
   };
 }
 
