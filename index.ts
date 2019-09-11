@@ -200,6 +200,26 @@ export function createFetchAction<Key>(
   };
 }
 
+function createHanabiAction<Key>(opts: {
+  types: IFetchTypes<Key>,
+  url: string,
+  method?: TFetchMethod,
+  fetchTypeName?: string,
+}) {
+
+  let types = opts.types
+  let url = opts.url
+  let method = opts.method || 'GET'
+  let fetchTypeName = opts.fetchTypeName || '@fetch'
+
+  return <Params, Response>(stateKey: string) => (params?: Params, meta?: any): TFetchAction<Key, Params, Response | undefined> => {
+    return {
+      stateKey, types, meta, params, url, method, type: fetchTypeName, payload: undefined,
+    };
+    // return action // as typeof action & { type: Key; payload?: Response }
+  };
+}
+
 /**
  * get the state type from reducer map
  */
