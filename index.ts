@@ -79,7 +79,6 @@ export function createFetchMiddleware(
   fn: (action: TFetchAction<any, any, any>) => Promise<TFetchAction<any, any, any>>
 ) {
   return (store: any) => (next: any) => (action: TFetchAction<any, any, any>): any => {
-    let actionRet = next(action)
     if (action.type === "@fetch") {
       // dispatch a loading action
       action.type = action.types.loading
@@ -92,7 +91,9 @@ export function createFetchMiddleware(
           return ret
         })
     }
-    return actionRet
+    else {
+      return next(action)
+    }
   }
 }
 

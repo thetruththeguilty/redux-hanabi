@@ -72,21 +72,21 @@ function reducer1(
   switch (action.type) {
     case Types.addNum:
       return {...state, num: state.num + action.payload}
-  }
-  return {... state}
-}
-
-function reducer2(
-  state = new InitialState2(),
-  action: ActionType<typeof actions> | ActionType<typeof fetchAction>
-): InitialState2 {
-  switch (action.type) {
     case Types.fetchTrigger:
       action.meta = () => fetchAction.fetchData('asdf')
       return state;
     case Types.loopTrigger:
       action.meta = () => actions.loopTrigger()
       return state;
+  }
+  return {... state}
+}
+
+function reducer2(
+  state = new InitialState2(),
+  action: ActionType<typeof fetchAction>
+): InitialState2 {
+  switch (action.type) {
     case Types.fetchData.success:
       return {...state, fetchData: action.payload}
   }
@@ -100,7 +100,9 @@ let rootReducer = combineReducers({
 let store = createStore(
   rootReducer, 
   applyMiddleware(
+
     createHanabi(),
+
     createFetchMiddleware(async (action) => {
       console.log("fetch", action.method, action.url, action.params)
 
