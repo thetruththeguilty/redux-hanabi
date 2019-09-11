@@ -75,11 +75,12 @@ export function createHanabi(opts: {stackMaxCount?: number} = {}) {
   };
 }
 
-export function createFetchMiddleware(
+export function createHanabiFetch(
+  typeName: string,
   fn: (action: TFetchAction<any, any, any>) => Promise<TFetchAction<any, any, any>>
 ) {
   return (store: any) => (next: any) => (action: TFetchAction<any, any, any>): any => {
-    if (action.type === "@fetch") {
+    if (action.type === typeName) {
       // dispatch a loading action
       action.type = action.types.loading
       store.dispatch(action)
@@ -89,7 +90,7 @@ export function createFetchMiddleware(
             return store.dispatch(ret)
           }
           ret.type === ret.types.error
-          ret.payload = "@fetch error, return type must be success or error"
+          ret.payload = `${typeName} error, return type must be success or error`
           return store.dispatch(ret)
         })
     }
@@ -97,6 +98,12 @@ export function createFetchMiddleware(
       return next(action)
     }
   }
+}
+
+export function createFetchMiddleware(
+  fn: (action: TFetchAction<any, any, any>) => Promise<TFetchAction<any, any, any>>
+) {
+  return createHanabiFetch("@fetch", fn)
 }
 
 // types generator is inspired by iron-redux
@@ -179,13 +186,17 @@ export function createAction<T>(type: T, stateKey = '') {
 /**
  * create fetch action,
  */
-export function createFetchAction<Key>(types: IFetchTypes<Key>, url: string, method: TFetchMethod = 'GET') {
+export function createFetchAction<Key>(
+  types: IFetchTypes<Key>,
+  url: string,
+  method: TFetchMethod = 'GET',
+  fetchTypeName: string = '@fetch'
+) {
   return <Params, Response>(stateKey?: string) => (params?: Params, meta?: any): TFetchAction<Key, Params, Response | undefined> => {
-    const action = {
-      stateKey, types, meta, params, url, method,
-      type: "@fetch", payload: undefined,
+    return {
+      stateKey, types, meta, params, url, method, type: fetchTypeName, payload: undefined,
     };
-    return action // as typeof action & { type: Key; payload?: Response }
+    // return action // as typeof action & { type: Key; payload?: Response }
   };
 }
 
