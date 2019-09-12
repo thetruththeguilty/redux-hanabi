@@ -1,6 +1,6 @@
 import {
   createHanabi,
-  composeTypes,
+  // composeTypes,
   createAction,
   createFetchAction,
   ActionType,
@@ -8,6 +8,9 @@ import {
   createFetchMiddleware,
   TFetchAction,
 } from '../index';
+
+import { createHanabiFetchAction } from '../hanabiFetch'
+import { composeTypes } from '../hanabiTypes'
 
 import { createStore, combineReducers, applyMiddleware, Action } from 'redux'
 
@@ -126,6 +129,9 @@ describe("test iron redux", () => {
     console.log(Types.fetchData.loading)
     console.log(Types.fetchData.success)
     console.log(Types.fetchData.error)
+    console.log(Types.fetchData.refresh)
+    console.log(Types.fetchData.save)
+    console.log(Types.fetchData.clear)
   })
 
   it("test reducer", () => {
