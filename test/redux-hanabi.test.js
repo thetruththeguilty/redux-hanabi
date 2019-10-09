@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const index_1 = require("../index");
-const hanabiTypes_1 = require("../hanabiTypes");
+const actionTypes_1 = require("../actionTypes");
 const redux_1 = require("redux");
 /**
  * 定义 types
@@ -29,8 +29,10 @@ var FetchTypes;
 (function (FetchTypes) {
     FetchTypes[FetchTypes["fetchData"] = 0] = "fetchData";
 })(FetchTypes || (FetchTypes = {}));
+const bTypes = actionTypes_1.createBasicTypes(prefix, BasicTypes);
+const fTypes = actionTypes_1.createFetchTypes(prefix, FetchTypes);
 // 合成types
-const Types = hanabiTypes_1.composeTypes({
+const Types = actionTypes_1.composeTypes({
     prefix,
     BasicTypes,
     FetchTypes
@@ -105,6 +107,9 @@ describe("test iron redux", () => {
         console.log(Types.fetchData.refresh);
         console.log(Types.fetchData.save);
         console.log(Types.fetchData.clear);
+        console.log("bTypes", bTypes);
+        console.log("fTypes", fTypes);
+        console.log("Types", Types);
     });
     it("test reducer", () => {
         let state = new InitialState1();

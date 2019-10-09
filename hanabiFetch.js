@@ -12,7 +12,7 @@ function createHanabiFetchAction(opts) {
     };
 }
 exports.createHanabiFetchAction = createHanabiFetchAction;
-function createHanabiFetch(typeName, fn) {
+function createHanabiFetchMiddleware(typeName, fn) {
     return (store) => (next) => (action) => {
         if (action.type === typeName) {
             // dispatch a loading action
@@ -33,4 +33,4 @@ function createHanabiFetch(typeName, fn) {
         }
     };
 }
-exports.createHanabiFetch = createHanabiFetch;
+exports.createHanabiFetchMiddleware = createHanabiFetchMiddleware;

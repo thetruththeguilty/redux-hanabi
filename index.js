@@ -46,7 +46,7 @@ function createHanabi(opts = {}) {
 }
 exports.createHanabi = createHanabi;
 function createFetchMiddleware(fn) {
-    return hanabiFetch_1.createHanabiFetch("@fetch", fn);
+    return hanabiFetch_1.createHanabiFetchMiddleware("@fetch", fn);
 }
 exports.createFetchMiddleware = createFetchMiddleware;
 const LOADING_SUFFIX = '_loading';

@@ -10,7 +10,7 @@ import {
 } from '../index';
 
 import { createHanabiFetchAction } from '../hanabiFetch'
-import { composeTypes } from '../actionTypes'
+import { createBasicTypes, composeTypes, createFetchTypes } from '../actionTypes'
 
 import { createStore, combineReducers, applyMiddleware, Action } from 'redux'
 
@@ -33,6 +33,9 @@ enum BasicTypes {
 enum FetchTypes {
   fetchData
 }
+
+const bTypes = createBasicTypes(prefix, BasicTypes)
+const fTypes = createFetchTypes(prefix, FetchTypes)
 
 // 合成types
 const Types = composeTypes({
@@ -132,6 +135,10 @@ describe("test iron redux", () => {
     console.log(Types.fetchData.refresh)
     console.log(Types.fetchData.save)
     console.log(Types.fetchData.clear)
+
+    console.log("bTypes", bTypes)
+    console.log("fTypes", fTypes)
+    console.log("Types", Types)
   })
 
   it("test reducer", () => {
