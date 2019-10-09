@@ -10,7 +10,7 @@ import {
 } from '../index';
 
 import { createHanabiFetchAction } from '../hanabiFetch'
-import { composeTypes } from '../hanabiTypes'
+import { composeTypes } from '../actionTypes'
 
 import { createStore, combineReducers, applyMiddleware, Action } from 'redux'
 
