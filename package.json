@@ -9,6 +9,7 @@
     "redux": "^4.0.4"
   },
   "dependencies": {
+    "immutable": "^4.0.0-rc.12",
     "redux-fetch-types": "^0.1.0"
   }
 }

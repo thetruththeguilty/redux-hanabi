@@ -133,7 +133,7 @@ describe("test iron redux", () => {
     console.log(Types.fetchData.loading)
     console.log(Types.fetchData.success)
     console.log(Types.fetchData.error)
-    console.log(Types.fetchData.refresh)
+    console.log(Types.fetchData.refreshing)
     console.log(Types.fetchData.save)
     console.log(Types.fetchData.clear)
 
