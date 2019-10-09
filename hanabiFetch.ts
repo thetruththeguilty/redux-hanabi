@@ -41,7 +41,7 @@ export function createHanabiFetchAction<Key>(opts: {
   };
 }
 
-export function createHanabiFetch(
+export function createHanabiFetchMiddleware(
   typeName: string,
   fn: (action: TFetchAction<any, any, any>) => Promise<TFetchAction<any, any, any>>
 ) {

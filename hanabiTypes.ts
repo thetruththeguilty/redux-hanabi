@@ -7,7 +7,7 @@ type B<T> = { [key in keyof T]: key };
 const LOADING_SUFFIX = '_loading';
 const SUCCESS_SUFFIX = '_success';
 const ERROR_SUFFIX = '_error';
-const CLEAR_SUFFIX = '_clear';
+const CLEAR_SUFFIX = '_clear'; // clear-able state
 const REFRESH_SUFFIX = '_refresh';
 const SAVE_SUFFIX = '_save';
 

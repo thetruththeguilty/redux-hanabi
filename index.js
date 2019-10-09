@@ -28,7 +28,7 @@ function createHanabi(opts = {}) {
         let ret = next(action);
         if (action.meta && (action.meta instanceof Function) && isHanabiAlive(action)) {
             let hanabi = action.meta();
-            if (hanabi && hanabi.type) {
+            if (hanabi && (typeof hanabi === "object") && hanabi.type) {
                 hanabi.__stack = action.__stack + 1;
                 // if u use rx-observable, a new action will appear in stream
                 return store.dispatch(hanabi);
