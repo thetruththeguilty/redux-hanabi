@@ -9,8 +9,9 @@ import {
   TFetchAction,
 } from '../index';
 
+import { composeTypes } from '../index'
 import { createHanabiFetchAction } from '../hanabiFetch'
-import { createBasicTypes, composeTypes, createFetchTypes } from '../actionTypes'
+import { createBasicTypes, createFetchTypes } from '../actionTypes'
 
 import { createStore, combineReducers, applyMiddleware, Action } from 'redux'
 

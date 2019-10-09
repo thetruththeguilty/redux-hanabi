@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const index_1 = require("../index");
+const index_2 = require("../index");
 const actionTypes_1 = require("../actionTypes");
 const redux_1 = require("redux");
 /**
@@ -32,7 +33,7 @@ var FetchTypes;
 const bTypes = actionTypes_1.createBasicTypes(prefix, BasicTypes);
 const fTypes = actionTypes_1.createFetchTypes(prefix, FetchTypes);
 // 合成types
-const Types = actionTypes_1.composeTypes({
+const Types = index_2.composeTypes({
     prefix,
     BasicTypes,
     FetchTypes

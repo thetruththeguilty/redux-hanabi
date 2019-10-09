@@ -1,3 +1,4 @@
+import { composeTypes } from './actionTypes'
 import { createHanabiFetchMiddleware } from './hanabiFetch'
 
 interface IAction<T, R> {
@@ -16,6 +17,8 @@ interface IFetchTypes<key> {
   success: key;
   loading: 'loading';
 }
+
+export { composeTypes }
 
 // const action = {
 //   types, params, url, method,
@@ -92,40 +95,6 @@ type B<T> = { [key in keyof T]: key };
 const LOADING_SUFFIX = '_loading';
 const SUCCESS_SUFFIX = '_success';
 const ERROR_SUFFIX = '_error';
-
-/**
- * create types
- */
-export function composeTypes<T1, T2>(config: { prefix: string; BasicTypes: T1; FetchTypes: T2 }): B<T1> & F<T2> {
-  const { prefix, BasicTypes: actionTypes = {}, FetchTypes: fetchActionTypes = {} } = config;
-
-  const types = { ...(actionTypes as any), ...(fetchActionTypes as any) };
-
-  const res = {} as any;
-
-  Object.keys(types).forEach(property => {
-    if (fetchActionTypes.hasOwnProperty(property)) {
-      let result = [] as any;
-
-      result = [
-        prefix + property + LOADING_SUFFIX,
-        prefix + property + SUCCESS_SUFFIX,
-        prefix + property + ERROR_SUFFIX
-      ];
-
-      result.loading = result[0];
-      result.success = result[1];
-      result.error = result[2];
-
-      res[property] = result;
-      return;
-    }
-
-    res[property] = prefix + property;
-  });
-
-  return res;
-}
 
 export type ActionCreator<T> = <S>(type: S) => (params?: T) => { type: S; payload: T };
 

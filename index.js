@@ -1,5 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const actionTypes_1 = require("./actionTypes");
+exports.composeTypes = actionTypes_1.composeTypes;
 const hanabiFetch_1 = require("./hanabiFetch");
 /**
  * the reducer use action.meta to add a function, to dispatch action,
@@ -52,32 +54,6 @@ exports.createFetchMiddleware = createFetchMiddleware;
 const LOADING_SUFFIX = '_loading';
 const SUCCESS_SUFFIX = '_success';
 const ERROR_SUFFIX = '_error';
-/**
- * create types
- */
-function composeTypes(config) {
-    const { prefix, BasicTypes: actionTypes = {}, FetchTypes: fetchActionTypes = {} } = config;
-    const types = Object.assign({}, actionTypes, fetchActionTypes);
-    const res = {};
-    Object.keys(types).forEach(property => {
-        if (fetchActionTypes.hasOwnProperty(property)) {
-            let result = [];
-            result = [
-                prefix + property + LOADING_SUFFIX,
-                prefix + property + SUCCESS_SUFFIX,
-                prefix + property + ERROR_SUFFIX
-            ];
-            result.loading = result[0];
-            result.success = result[1];
-            result.error = result[2];
-            res[property] = result;
-            return;
-        }
-        res[property] = prefix + property;
-    });
-    return res;
-}
-exports.composeTypes = composeTypes;
 const identify = (arg) => arg;
 /**
  * create action
