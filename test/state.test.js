@@ -6,7 +6,8 @@ describe("test fetch state", () => {
     beforeEach(() => {
         state = new state_1.FetchState("foo");
     });
-    it("test state");
+    it("test state", () => {
+    });
 });
 describe("test page state", () => {
     let state = new state_1.PageState("foo", 1, 10);

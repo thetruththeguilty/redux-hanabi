@@ -91,8 +91,8 @@ export function pageStateReducer(state: PageState, action: IAction<any>): PageSt
     case action.types.refreshing:
       return state.merge({
         isRefreshing: true,
-        currentPage: state.startPage,
-        list: i.List(),
+        // currentPage: state.startPage,
+        // list: i.List(),
       })
     case action.types.loading:
       return state.set("isLoading", true)

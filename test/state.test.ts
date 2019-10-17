@@ -9,7 +9,9 @@ describe("test fetch state", () => {
     state = new FetchState("foo")
   })
 
-  it("test state")
+  it("test state", () => {
+
+  })
 })
 
 describe("test page state", () => {
