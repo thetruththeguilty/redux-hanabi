@@ -8,6 +8,21 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const i = __importStar(require("immutable"));
+// export interface IAction<P> {
+//   type: string,
+//   types: {
+//     refreshing: string
+//     loading: string
+//     success: string
+//     error: string
+//     clear: string
+//     save: string
+//     finish: string
+//   },
+//   payload: P,
+//   stateKey?: string,
+//   meta?: any,
+// }
 const FetchStateRecord = i.Record({
     data: undefined,
     isRefreshing: false,
@@ -25,6 +40,16 @@ class FetchState extends FetchStateRecord {
     }
 }
 exports.FetchState = FetchState;
+function createStateSelectors(stateSelector) {
+    let t = stateSelector;
+    t.data = (state) => stateSelector(state).data;
+    t.isFinished = (state) => stateSelector(state).isFinished || false;
+    t.isLoading = (state) => stateSelector(state).isLoading || false;
+    t.isRefreshing = (state) => stateSelector(state).isRefreshing || false;
+    t.isSaving = (state) => stateSelector(state).isSaving || false;
+    return t;
+}
+exports.createStateSelectors = createStateSelectors;
 function fetchStateReducer(state, action) {
     if (state.stateKey !== action.stateKey)
         return state;
@@ -85,6 +110,19 @@ class PageState extends PageStateRecord {
     }
 }
 exports.PageState = PageState;
+function createPageSelectors(stateSelector) {
+    let t = stateSelector;
+    t.list = (state) => stateSelector(state).list || i.List();
+    t.currentPage = (state) => stateSelector(state).currentPage || 1;
+    t.pageSize = (state) => stateSelector(state).pageSize || 10;
+    t.startPage = (state) => stateSelector(state).startPage || 10;
+    t.isFinished = (state) => stateSelector(state).isFinished || false;
+    t.isLoading = (state) => stateSelector(state).isLoading || false;
+    t.isRefreshing = (state) => stateSelector(state).isRefreshing || false;
+    t.isSaving = (state) => stateSelector(state).isSaving || false;
+    return t;
+}
+exports.createPageSelectors = createPageSelectors;
 function pageStateReducer(state, action) {
     if (state.stateKey !== action.stateKey)
         return state;
@@ -92,8 +130,6 @@ function pageStateReducer(state, action) {
         case action.types.refreshing:
             return state.merge({
                 isRefreshing: true,
-                currentPage: state.startPage,
-                list: i.List(),
             });
         case action.types.loading:
             return state.set("isLoading", true);

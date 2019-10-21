@@ -1,6 +1,22 @@
 import * as i from 'immutable'
 import { IAction } from 'redux-fetch-types'
 
+// export interface IAction<P> {
+//   type: string,
+//   types: {
+//     refreshing: string
+//     loading: string
+//     success: string
+//     error: string
+//     clear: string
+//     save: string
+//     finish: string
+//   },
+//   payload: P,
+//   stateKey?: string,
+//   meta?: any,
+// }
+
 const FetchStateRecord = i.Record({
   data: undefined,
   isRefreshing: false,
@@ -18,6 +34,27 @@ export class FetchState extends FetchStateRecord {
     // use this to distinct those actions for this state
     super({stateKey})
   }
+}
+
+interface IStateSelector {
+  (state: any): any
+  data: (state: any) => i.List<any>
+  isRefreshing: (state: any) => boolean,
+  isLoading: (state: any) => boolean,
+  isFinished: (state: any) => boolean,
+  isSaving: (state: any) => boolean,
+}
+
+export function createStateSelectors(
+  stateSelector: (state: any) => { [i: string]: any }
+): IStateSelector {
+  let t = <IStateSelector>stateSelector
+  t.data = (state) => stateSelector(state).data
+  t.isFinished = (state) => stateSelector(state).isFinished || false
+  t.isLoading = (state) => stateSelector(state).isLoading || false
+  t.isRefreshing = (state) => stateSelector(state).isRefreshing || false
+  t.isSaving = (state) => stateSelector(state).isSaving || false
+  return t
 }
 
 export function fetchStateReducer(state: FetchState, action: IAction<any>): FetchState {
@@ -81,6 +118,33 @@ export class PageState extends PageStateRecord {
     // use startPage for there may be some fucking shit page start with index 1
     super({ stateKey, pageSize, startPage, currentPage: startPage })
   }
+}
+
+interface IPageSelector {
+  (state: any): any
+  list: (state: any) => i.List<any>
+  isRefreshing: (state: any) => boolean,
+  isLoading: (state: any) => boolean,
+  isFinished: (state: any) => boolean,
+  isSaving: (state: any) => boolean,
+  startPage: (state: any) => number,
+  currentPage: (state: any) => number,
+  pageSize: (state: any) => number,
+}
+
+export function createPageSelectors(
+  stateSelector: (state: any) => { [i: string]: any }
+): IPageSelector {
+  let t = <IPageSelector>stateSelector
+  t.list = (state) => stateSelector(state).list || i.List()
+  t.currentPage = (state) => stateSelector(state).currentPage || 1
+  t.pageSize = (state) => stateSelector(state).pageSize || 10
+  t.startPage = (state) => stateSelector(state).startPage || 10
+  t.isFinished = (state) => stateSelector(state).isFinished || false
+  t.isLoading = (state) => stateSelector(state).isLoading || false
+  t.isRefreshing = (state) => stateSelector(state).isRefreshing || false
+  t.isSaving = (state) => stateSelector(state).isSaving || false
+  return t
 }
 
 export function pageStateReducer(state: PageState, action: IAction<any>): PageState {

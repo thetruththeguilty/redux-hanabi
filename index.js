@@ -26,20 +26,20 @@ function createHanabi(opts = {}) {
             action.__stack = 0;
         return action.__stack < stackMaxCount;
     };
-    return (store) => (next) => (action) => {
+    return ({ dispatch, getState }) => (next) => (action) => {
         let ret = next(action);
         if (action.meta && (action.meta instanceof Function) && isHanabiAlive(action)) {
-            let hanabi = action.meta();
+            let hanabi = action.meta(dispatch, getState);
             if (hanabi && (typeof hanabi === "object") && hanabi.type) {
                 hanabi.__stack = action.__stack + 1;
                 // if u use rx-observable, a new action will appear in stream
-                return store.dispatch(hanabi);
+                return dispatch(hanabi);
             }
             else if (hanabi instanceof Promise) {
                 // if the return is a promise then replace the return value
                 return hanabi.then(ret => {
                     ret.__stack = action.__stack + 1;
-                    return store.dispatch(ret);
+                    return dispatch(ret);
                 });
             }
         }
