@@ -1,6 +1,6 @@
 {
   "name": "redux-hanabi",
-  "version": "0.3.6",
+  "version": "0.3.7",
   "main": "index.js",
   "license": "MIT",
   "devDependencies": {
@@ -10,6 +10,6 @@
   },
   "dependencies": {
     "immutable": "^4.0.0-rc.12",
-    "redux-fetch-types": "^0.1.0"
+    "redux-fetch-types": "^0.1.3"
   }
 }
